@@ -1,0 +1,5 @@
+<!DOCTYPE html><html><body><h2>Login</h2>
+<form id="f"><input name="email" placeholder="email"/><input name="password" type="password" placeholder="password"/><button>Login</button></form>
+<script>
+document.getElementById('f').onsubmit=async(e)=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target));await fetch('/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});location='/';}
+</script></body></html>

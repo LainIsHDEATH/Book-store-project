@@ -1,0 +1,6 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><body><h2>Users</h2>
+<div th:each="u: ${users}">
+<span th:text="${u.email}"></span> - <span th:text="${u.role}"></span> - <span th:text="${u.blocked}"></span>
+<form th:action="@{'/employee/users/' + ${u.email} + '/block'}" method="post"><input type="hidden" name="blocked" value="true"/><button>Block</button></form>
+<form th:action="@{'/employee/users/' + ${u.email} + '/block'}" method="post"><input type="hidden" name="blocked" value="false"/><button>Unblock</button></form>
+</div></body></html>

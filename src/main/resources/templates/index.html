@@ -1,0 +1,18 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><body>
+<h2 th:text="#{home.title}">Book Store</h2>
+<a href="/?lang=en">EN</a> | <a href="/?lang=uk">UK</a> | <a href="/orders">Orders</a>
+<form method="get" action="/">
+<input name="q" th:value="${q}" placeholder="search"/>
+<select name="genre"><option value="">All genres</option><option th:each="g: ${genres}" th:value="${g}" th:text="${g}"></option></select>
+<select name="language"><option value="">All languages</option><option value="ENGLISH">ENGLISH</option><option value="UKRAINIAN">UKRAINIAN</option></select>
+<button>Filter</button></form>
+<div th:each="b: ${books.content}">
+ <b th:text="${b.name}"></b> - <span th:text="${b.author}"></span> - <span th:text="${b.price}"></span>
+ <form th:if="${#authorization.expression('isAuthenticated()')}" th:action="@{'/cart/add/' + ${b.name}}" method="post"><button>Add to cart</button></form>
+</div>
+<div th:if="${cart != null}">
+<h3>Cart</h3><div th:each="c: ${cart}"><span th:text="${c.key}"></span> x <span th:text="${c.value}"></span></div>
+<form action="/orders/checkout" method="post"><button>Checkout</button></form>
+</div>
+<a href="/login">Login</a> <a href="/register">Register</a>
+</body></html>

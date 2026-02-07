@@ -1,0 +1,5 @@
+<!DOCTYPE html><html><body><h2>Register</h2>
+<form id="f"><input name="email"/><input name="name"/><input name="password" type="password"/><select name="role"><option>customer</option><option>employee</option></select><button>Register</button></form>
+<script>
+document.getElementById('f').onsubmit=async(e)=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target));await fetch('/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});location='/';}
+</script></body></html>
