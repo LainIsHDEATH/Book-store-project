@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="layout :: content">
+    <h1>Account blocked</h1>
+    <p>Your account is blocked. You cannot continue.</p>
+    <a th:href="@{/auth/login}">Back to login</a>
+</div>
+</body>
+</html>

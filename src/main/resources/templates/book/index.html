@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:replace="layout :: content">
+    <h1>Books</h1>
+
+    <form th:action="@{/}" method="get">
+        <input type="text" name="q" th:value="${q}" placeholder="search title/author"/>
+        <select name="genre">
+            <option value="">ALL GENRES</option>
+            <option th:each="g : ${genres}" th:value="${g}" th:text="${g}" th:selected="${g == genre}"></option>
+        </select>
+
+        <select name="language">
+            <option value="">ALL LANG</option>
+            <option th:each="l : ${langs}" th:value="${l}" th:text="${l}" th:selected="${l == language}"></option>
+        </select>
+
+        <select name="sort">
+            <option value="id,desc" th:selected="${sort == 'id,desc'}">Newest</option>
+            <option value="price,asc" th:selected="${sort == 'price,asc'}">Price ↑</option>
+            <option value="price,desc" th:selected="${sort == 'price,desc'}">Price ↓</option>
+        </select>
+
+        <button type="submit">Apply</button>
+    </form>
+
+    <hr/>
+
+    <div th:each="b : ${books.content}">
+        <h3 th:text="${#locale.language == 'uk' ? b.nameUa : b.nameEn}"></h3>
+        <div>
+            <span th:text="${#locale.language == 'uk' ? b.author.nameUa : b.author.nameEn}"></span>
+            • <span th:text="${b.genre}"></span>
+            • <span th:text="${b.language}"></span>
+            • <b th:text="${b.price}"></b>
+        </div>
+        <p th:text="${#locale.language == 'uk' ? b.descriptionUa : b.descriptionEn}"></p>
+
+        <form th:action="@{/cart/items}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <input type="hidden" name="bookId" th:value="${b.id}"/>
+            <button type="submit">Add to cart</button>
+        </form>
+
+        <hr/>
+    </div>
+
+    <div>
+        <a th:if="${books.hasPrevious()}"
+           th:href="@{/(page=${books.number-1}, size=${books.size}, genre=${genre}, language=${language}, q=${q}, sort=${sort})}">Prev</a>
+
+        <span th:text="${books.number + 1}"></span>/<span th:text="${books.totalPages}"></span>
+
+        <a th:if="${books.hasNext()}"
+           th:href="@{/(page=${books.number+1}, size=${books.size}, genre=${genre}, language=${language}, q=${q}, sort=${sort})}">Next</a>
+    </div>
+</div>
+</body>
+</html>
