@@ -1,4 +1,4 @@
-INSERT INTO EMPLOYEES (BIRTH_DATE, EMAIL, NAME, PASSWORD, PHONE)
+INSERT INTO employees (BIRTH_DATE, EMAIL, NAME, PASSWORD, PHONE)
 VALUES ('1990-05-15', 'john.doe@email.com', 'John Doe', 'pass123', '555-123-4567'),
        ('1985-09-20', 'jane.smith@email.com', 'Jane Smith', 'abc456', '555-987-6543'),
        ('1978-03-08', 'bob.jones@email.com', 'Bob Jones', 'qwerty789', '555-321-6789'),
@@ -10,7 +10,7 @@ VALUES ('1990-05-15', 'john.doe@email.com', 'John Doe', 'pass123', '555-123-4567
        ('1992-08-22', 'david.wright@email.com', 'David Wright', 'access123', '555-456-7890'),
        ('1980-04-10', 'emily.harris@email.com', 'Emily Harris', '1234abcd', '555-098-7654');
 
-INSERT INTO CLIENTS (BALANCE, EMAIL, NAME, PASSWORD)
+INSERT INTO clients (BALANCE, EMAIL, NAME, PASSWORD)
 VALUES (1000.00, 'client1@example.com', 'Medelyn Wright', 'password123'),
        (1500.50, 'client2@example.com', 'Landon Phillips', 'securepass'),
        (800.75, 'client3@example.com', 'Harmony Mason', 'abc123'),
@@ -22,7 +22,7 @@ VALUES (1000.00, 'client1@example.com', 'Medelyn Wright', 'password123'),
        (1050.90, 'client9@example.com', 'Amina Clarke', 'qwerty123'),
        (880.20, 'client10@example.com', 'Bryson Chavez', 'pass789');
 
-INSERT INTO BOOKS (name, genre, age_group, price, publication_year, author, number_of_pages, characteristics,description, language)
+INSERT INTO books (name, genre, age_group, price, publication_year, author, number_of_pages, characteristics,description, language)
 VALUES ('The Hidden Treasure', 'Adventure', 'ADULT', 24.99, '2018-05-15', 'Emily White', 400, 'Mysterious journey','An enthralling adventure of discovery', 'ENGLISH'),
        ('Echoes of Eternity', 'Fantasy', 'TEEN', 16.50, '2011-01-15', 'Daniel Black', 350, 'Magical realms', 'A spellbinding tale of magic and destiny', 'ENGLISH'),
        ('Whispers in the Shadows', 'Mystery', 'ADULT', 29.95, '2018-08-11', 'Sophia Green', 450, 'Intriguing suspense','A gripping mystery that keeps you guessing', 'ENGLISH'),

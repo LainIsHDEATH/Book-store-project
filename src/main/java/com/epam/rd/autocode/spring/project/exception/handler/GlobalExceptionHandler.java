@@ -1,5 +1,7 @@
-package com.epam.rd.autocode.spring.project.exception;
+package com.epam.rd.autocode.spring.project.exception.handler;
 
+import com.epam.rd.autocode.spring.project.exception.AlreadyExistException;
+import com.epam.rd.autocode.spring.project.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

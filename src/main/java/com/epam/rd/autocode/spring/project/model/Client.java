@@ -25,4 +25,11 @@ public class Client extends User {
 
     @Column(name = "BALANCE", nullable = false)
     private BigDecimal balance;
+
+    @Column(name = "is_blocked")
+    private Boolean isBlocked;
+
+    public Boolean isBlocked() {
+        return isBlocked;
+    }
 }
