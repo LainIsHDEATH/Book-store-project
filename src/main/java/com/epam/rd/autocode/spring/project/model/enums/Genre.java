@@ -8,6 +8,7 @@ public enum Genre {
     MYSTERY,
     ADVENTURE,
     CLASSIC,
+    HISTORICAL_FICTION,
     CHILDREN,
     OTHER
 }

@@ -9,6 +9,7 @@ import com.epam.rd.autocode.spring.project.model.enums.Language;
 import com.epam.rd.autocode.spring.project.repo.BookRepository;
 import com.epam.rd.autocode.spring.project.service.BookService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public Page<BookDTO> search(String keyword, Genre genre, AgeGroup ageGroup, Language language, int page, String sort) {
@@ -34,6 +36,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDTO save(BookDTO dto) {
         Book entity = dto.getId() == null ? new Book() : bookRepository.findById(dto.getId()).orElseThrow(() -> new NotFoundException("Book not found"));
+//        modelMapper.map(dto, entity);
         entity.setNameEn(dto.getNameEn());
         entity.setNameUk(dto.getNameUk());
         entity.setAuthorEn(dto.getAuthorEn());

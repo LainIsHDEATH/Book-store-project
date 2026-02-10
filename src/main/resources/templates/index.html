@@ -14,7 +14,7 @@
 
 <div th:each="b:${booksPage.content}">
     <h3 th:text="${#locale.language == 'uk' ? b.nameUk : b.nameEn}"></h3>
-    <p th:text="${#locale.language == 'uk' ? b.authorUk : b.authorEn}"></p>
+    <p  th:text="${#locale.language == 'uk' ? b.authorUk : b.authorEn}"></p>
     <p th:text="${b.price}"></p>
     <a th:href="@{'/cart/add/' + ${b.id}}">+</a>
 </div>
