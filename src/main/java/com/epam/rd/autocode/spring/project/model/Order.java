@@ -1,5 +1,6 @@
 package com.epam.rd.autocode.spring.project.model;
 
+import com.epam.rd.autocode.spring.project.model.enums.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,14 +9,13 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "orders")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(name = "ORDERS")
 public class Order {
 
     @Id
@@ -23,19 +23,23 @@ public class Order {
     private Long id;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "CLIENT_ID", nullable = false)
+    @JoinColumn(name = "client_id")
     private Client client;
 
     @ManyToOne
-    @JoinColumn(name = "EMPLOYEE_ID")
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    @Column(name = "ORDER_DATE", nullable = false)
+    @Column(name = "order_date", nullable = false)
     private LocalDateTime orderDate;
 
-    @Column(name = "PRICE", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private OrderStatus status;
+
+    @Column(nullable = false)
     private BigDecimal price;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BookItem> bookItems;
+    private List<BookItem> items = new ArrayList<>();
 }

@@ -13,7 +13,7 @@ import jakarta.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "BOOK_ITEMS")
+@Table(name = "book_items")
 public class BookItem {
 
     @Id

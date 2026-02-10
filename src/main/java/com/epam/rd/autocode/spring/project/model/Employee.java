@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-@Table(name = "EMPLOYEES")
+@Table(name = "employees")
 public class Employee extends User {
 
     public Employee() {
@@ -29,4 +29,11 @@ public class Employee extends User {
 
     @Column(name = "PHONE", nullable = false)
     private String phone;
+
+    @Column(name = "is_blocked")
+    private Boolean isBlocked;
+
+    public Boolean isBlocked() {
+        return isBlocked;
+    }
 }

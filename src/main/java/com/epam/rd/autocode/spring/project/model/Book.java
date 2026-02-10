@@ -1,10 +1,7 @@
 package com.epam.rd.autocode.spring.project.model;
 
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import com.epam.rd.autocode.spring.project.model.enums.AgeGroup;
 import com.epam.rd.autocode.spring.project.model.enums.Language;
 import jakarta.persistence.*;
@@ -12,47 +9,56 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Table(name = "BOOKS")
+@Table(name = "books")
+@Data
 public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "NAME", nullable = false, unique = true)
-    private String name;
+    @Column(name = "name_en")
+    private String nameEn;
 
-    @Column(name = "GENRE", nullable = false)
-    private String genre;
+    @Column(name = "name_uk")
+    private String nameUk;
+
+    @Column(name = "genre_en")
+    private String genreEn;
+
+    @Column(name = "genre_uk")
+    private String genreUk;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "AGE_GROUP", nullable = false)
+    @Column(name = "age_group")
     private AgeGroup ageGroup;
 
-    @Column(name = "PRICE", nullable = false)
     private BigDecimal price;
 
-    @Column(name = "PUBLICATION_YEAR", nullable = false)
+    @Column(name = "publication_date")
     private LocalDate publicationDate;
 
-    @Column(name = "AUTHOR", nullable = false)
-    private String author;
+    @Column(name = "author_en")
+    private String authorEn;
 
-    @Column(name = "NUMBER_OF_PAGES", nullable = false)
+    @Column(name = "author_uk")
+    private String authorUk;
+
+    @Column(name = "pages")
     private Integer pages;
 
-    @Column(name = "CHARACTERISTICS")
+    @Column(columnDefinition = "TEXT")
     private String characteristics;
 
-    @Column(name = "DESCRIPTION")
-    private String description;
+    @Column(name = "description_en", columnDefinition = "TEXT")
+    private String descriptionEn;
+
+    @Column(name = "description_uk", columnDefinition = "TEXT")
+    private String descriptionUk;
+
+    private Integer stockCount;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "LANGUAGE", nullable = false)
     private Language language;
 }
