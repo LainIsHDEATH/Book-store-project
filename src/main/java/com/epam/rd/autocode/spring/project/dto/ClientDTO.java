@@ -1,34 +1,28 @@
 package com.epam.rd.autocode.spring.project.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.*;
+import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class ClientDTO{
+@Data
+public class ClientDTO {
+    private Long id;
 
-    @NotBlank
     @Email
+    @NotBlank
     private String email;
 
     @NotBlank
-    private String password;
-
-    @NotBlank
+    @Size(min = 2, max = 64)
     private String name;
+
+    @Size(min = 8, max = 72)
+    private String password;
 
     @NotNull
     @PositiveOrZero
     private BigDecimal balance;
 
+    private boolean blocked;
 }

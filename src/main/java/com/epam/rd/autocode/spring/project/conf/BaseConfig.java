@@ -25,7 +25,7 @@ public class BaseConfig implements WebMvcConfigurer {
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
-        ms.setBasename("classpath:/messages");
+        ms.setBasename("classpath:messages");
         ms.setDefaultEncoding(StandardCharsets.UTF_8.name());
         ms.setFallbackToSystemLocale(false);
         return ms;

@@ -1,0 +1,16 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><body>
+<div th:replace="fragments/navbar :: navbar"></div>
+<table>
+<tr><th>ID</th><th>Client</th><th>Status</th><th>Price</th><th>Action</th></tr>
+<tr th:each="o:${orders}">
+<td th:text="${o.id}"></td><td th:text="${o.clientEmail}"></td><td th:text="${o.status}"></td><td th:text="${o.price}"></td>
+<td>
+<form th:action="@{/employee/orders/update-status}" method="post">
+<input type="hidden" name="orderId" th:value="${o.id}"/>
+<select name="status"><option th:each="s:${statuses}" th:value="${s}" th:text="${s}"></option></select>
+<button type="submit">Update</button>
+</form>
+</td>
+</tr>
+</table>
+</body></html>

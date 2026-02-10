@@ -1,0 +1,7 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><body>
+<div th:replace="fragments/navbar :: navbar"></div>
+<table>
+<tr><th>Name</th><th>Email</th><th>Blocked</th><th></th></tr>
+<tr th:each="c:${clients}"><td th:text="${c.name}"></td><td th:text="${c.email}"></td><td th:text="${c.blocked}"></td><td><a th:href="@{'/employee/clients/toggle-block/' + ${c.id}}">toggle block</a></td></tr>
+</table>
+</body></html>

@@ -1,27 +1,31 @@
 package com.epam.rd.autocode.spring.project.model;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @MappedSuperclass
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class User {
+public abstract class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "EMAIL", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "PASSWORD", nullable = false)
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "NAME", nullable = false)
+    @Column(nullable = false)
     private String name;
+
+    @Column(name = "is_blocked", nullable = false)
+    private boolean blocked = false;
 }

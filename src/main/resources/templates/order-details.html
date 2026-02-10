@@ -1,0 +1,9 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><body>
+<div th:replace="fragments/navbar :: navbar"></div>
+<h2>Order #[[${order.id}]]</h2>
+<table>
+<tr><th>Title</th><th>Qty</th><th>Unit</th><th>Total</th></tr>
+<tr th:each="i:${order.bookItems}"><td th:text="${i.title}"></td><td th:text="${i.quantity}"></td><td th:text="${i.unitPrice}"></td><td th:text="${i.lineTotal}"></td></tr>
+</table>
+<p>Total: <span th:text="${order.price}"></span></p>
+</body></html>

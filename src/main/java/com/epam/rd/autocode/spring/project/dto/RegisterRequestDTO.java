@@ -2,33 +2,28 @@ package com.epam.rd.autocode.spring.project.dto;
 
 import com.epam.rd.autocode.spring.project.model.enums.Role;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-public class RegisterRequest {
-
+@Data
+public class RegisterRequestDTO {
     @NotNull
     private Role role;
 
-    @NotBlank
     @Email
+    @NotBlank
     private String email;
 
     @NotBlank
-    @Size(min = 2, max = 64)
     private String name;
 
-    @NotBlank
-    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Phone must be 10-15 digits, optional +")
     private String phone;
+
+    private String birthDate;
 
     @NotBlank
     @Size(min = 8, max = 72)
     private String password;
 
     @NotBlank
-    @Size(min = 8, max = 72)
     private String confirmPassword;
 }

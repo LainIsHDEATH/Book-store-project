@@ -1,0 +1,9 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><body>
+<div th:replace="fragments/navbar :: navbar"></div>
+<p>Balance: <span th:text="${client.balance}"></span></p>
+<form method="post" th:action="@{/clients/recharge}">
+<input type="number" step="0.01" min="0.01" name="amount" required/>
+<button type="submit">Top up</button>
+</form>
+<p th:if="${param.success}">[[#{message.recharge.success}]]</p>
+</body></html>

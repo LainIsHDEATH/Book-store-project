@@ -1,0 +1,11 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><body>
+<div th:replace="fragments/navbar :: navbar"></div>
+<a th:href="@{/employee/books/add}">Add book</a>
+<table>
+<tr><th>ID</th><th>Name EN</th><th>Name UK</th><th></th></tr>
+<tr th:each="b:${booksPage.content}">
+<td th:text="${b.id}"></td><td th:text="${b.nameEn}"></td><td th:text="${b.nameUk}"></td>
+<td><a th:href="@{'/employee/books/edit/' + ${b.id}}">edit</a> <a th:href="@{'/employee/books/delete/' + ${b.id}}">delete</a></td>
+</tr>
+</table>
+</body></html>

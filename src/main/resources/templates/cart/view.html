@@ -1,27 +1,15 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
-<div th:replace="layout :: content">
-    <h1>Cart</h1>
-
-    <div th:if="${#lists.isEmpty(items)}">Cart is empty</div>
-
-    <div th:each="it : ${items}">
-        <b th:text="${#locale.language == 'uk' ? it.book.nameUa : it.book.nameEn}"></b>
-        x <span th:text="${it.qty}"></span>
-        = <span th:text="${it.book.price * it.qty}"></span>
-
-        <form th:action="@{'/cart/items/' + ${it.id} + '/remove'}" method="post" style="display:inline;">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-            <button type="submit">Remove</button>
-        </form>
-    </div>
-
-    <hr/>
-    <form th:action="@{/cart/checkout}" method="post">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <button type="submit">Checkout (PAID)</button>
-    </form>
-</div>
-</body>
-</html>
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><body>
+<div th:replace="fragments/navbar :: navbar"></div>
+<a th:href="@{/cart/clear}">[[#{button.clear}]]</a>
+<table>
+<tr><th>Title</th><th>Qty</th><th>Unit</th><th>Total</th><th></th></tr>
+<tr th:each="i:${cart.items}">
+<td th:text="${i.title}"></td>
+<td><a th:href="@{'/cart/minus/' + ${i.bookId}}">-</a> <span th:text="${i.quantity}"></span> <a th:href="@{'/cart/add/' + ${i.bookId}}">+</a></td>
+<td th:text="${i.unitPrice}"></td><td th:text="${i.lineTotal}"></td>
+<td><a th:href="@{'/cart/remove/' + ${i.bookId}}">x</a></td>
+</tr>
+</table>
+<p>Total: <span th:text="${cart.total}"></span></p>
+<a th:href="@{/orders/checkout}">[[#{button.checkout}]]</a>
+</body></html>

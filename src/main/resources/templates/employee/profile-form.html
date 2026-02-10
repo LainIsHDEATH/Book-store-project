@@ -1,0 +1,16 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><body>
+<div th:replace="fragments/navbar :: navbar"></div>
+<form method="post" th:action="@{/employee/profile/save}" th:object="${employee}">
+<input type="email" th:field="*{email}" readonly/>
+<input th:field="*{name}"/>
+<input th:field="*{phone}"/>
+<input type="date" th:field="*{birthDate}"/>
+<button type="submit">Save</button>
+</form>
+<form method="post" th:action="@{/employee/profile/change-password}" th:object="${passwordChange}">
+<input type="password" th:field="*{oldPassword}" placeholder="Old"/>
+<input type="password" th:field="*{newPassword}" placeholder="New"/>
+<input type="password" th:field="*{confirmPassword}" placeholder="Confirm"/>
+<button type="submit">Change password</button>
+</form>
+</body></html>

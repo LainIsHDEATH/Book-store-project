@@ -1,50 +1,51 @@
 package com.epam.rd.autocode.spring.project.dto;
 
 import com.epam.rd.autocode.spring.project.model.enums.AgeGroup;
+import com.epam.rd.autocode.spring.project.model.enums.Genre;
 import com.epam.rd.autocode.spring.project.model.enums.Language;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.*;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class BookDTO {
+    private Long id;
 
     @NotBlank
-    private String name;
-
+    private String nameEn;
     @NotBlank
-    private String genre;
+    private String nameUk;
+    @NotBlank
+    private String authorEn;
+    @NotBlank
+    private String authorUk;
+    @NotBlank
+    private String descriptionEn;
+    @NotBlank
+    private String descriptionUk;
 
     @NotNull
+    private Genre genre;
+    @NotNull
     private AgeGroup ageGroup;
+    @NotNull
+    private Language language;
+
+    @NotNull
+    @PastOrPresent
+    private LocalDate publicationDate;
+
+    @NotNull
+    @Positive
+    private Integer pages;
 
     @NotNull
     @Positive
     private BigDecimal price;
 
     @NotNull
-    private LocalDate publicationDate;
-
-    @NotBlank
-    private String author;
-
-    @NotNull
-    @Positive
-    private Integer pages;
-
-    private String characteristics;
-    private String description;
-
-    @NotNull
-    private Language language;
+    @PositiveOrZero
+    private Integer stockCount;
 }

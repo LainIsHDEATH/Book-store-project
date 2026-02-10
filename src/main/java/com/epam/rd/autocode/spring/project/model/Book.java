@@ -1,58 +1,64 @@
 package com.epam.rd.autocode.spring.project.model;
 
-import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import com.epam.rd.autocode.spring.project.model.enums.AgeGroup;
+import com.epam.rd.autocode.spring.project.model.enums.Genre;
 import com.epam.rd.autocode.spring.project.model.enums.Language;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "books")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(name = "BOOKS")
 public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "NAME", nullable = false, unique = true)
-    private String name;
+    @Column(name = "name_en", nullable = false)
+    private String nameEn;
 
-    @Column(name = "GENRE", nullable = false)
-    private String genre;
+    @Column(name = "name_uk", nullable = false)
+    private String nameUk;
+
+    @Column(name = "author_en", nullable = false)
+    private String authorEn;
+
+    @Column(name = "author_uk", nullable = false)
+    private String authorUk;
+
+    @Column(name = "description_en", columnDefinition = "TEXT")
+    private String descriptionEn;
+
+    @Column(name = "description_uk", columnDefinition = "TEXT")
+    private String descriptionUk;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "AGE_GROUP", nullable = false)
+    @Column(nullable = false)
+    private Genre genre;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "age_group", nullable = false)
     private AgeGroup ageGroup;
 
-    @Column(name = "PRICE", nullable = false)
-    private BigDecimal price;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Language language;
 
-    @Column(name = "PUBLICATION_YEAR", nullable = false)
+    @Column(name = "publication_date", nullable = false)
     private LocalDate publicationDate;
 
-    @Column(name = "AUTHOR", nullable = false)
-    private String author;
-
-    @Column(name = "NUMBER_OF_PAGES", nullable = false)
+    @Column(nullable = false)
     private Integer pages;
 
-    @Column(name = "CHARACTERISTICS")
-    private String characteristics;
+    @Column(nullable = false)
+    private BigDecimal price;
 
-    @Column(name = "DESCRIPTION")
-    private String description;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "LANGUAGE", nullable = false)
-    private Language language;
+    @Column(name = "stock_count", nullable = false)
+    private Integer stockCount = 0;
 }

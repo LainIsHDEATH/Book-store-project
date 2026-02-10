@@ -1,32 +1,22 @@
 package com.epam.rd.autocode.spring.project.model;
 
-import lombok.Getter;
-import lombok.Setter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "employees")
 @Getter
 @Setter
-@Entity
-@Table(name = "EMPLOYEES")
 public class Employee extends User {
 
-    public Employee() {
-        super();
-    }
-
-    public Employee(Long id, String email, String password, String name, LocalDate birthDate, String phone) {
-        super(id, email, password, name);
-        this.birthDate = birthDate;
-        this.phone = phone;
-    }
-
-    @Column(name = "BIRTH_DATE", nullable = false)
+    @Column(name = "birth_date")
     private LocalDate birthDate;
 
-    @Column(name = "PHONE", nullable = false)
+    @Column(nullable = false)
     private String phone;
 }

@@ -1,33 +1,32 @@
 package com.epam.rd.autocode.spring.project.model;
 
-import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import jakarta.persistence.*;
+import java.math.BigDecimal;
 
+@Entity
+@Table(name = "book_items")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(name = "BOOK_ITEMS")
 public class BookItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "QUANTITY", nullable = false)
-    private Integer quantity;
-
     @ManyToOne(optional = false)
-    @JoinColumn(name = "BOOK_ID", nullable = false)
+    @JoinColumn(name = "book_id")
     private Book book;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "ORDER_ID", nullable = false)
+    @JoinColumn(name = "order_id")
     private Order order;
+
+    @Column(nullable = false)
+    private Integer quantity;
+
+    @Column(name = "unit_price", nullable = false)
+    private BigDecimal unitPrice;
 }

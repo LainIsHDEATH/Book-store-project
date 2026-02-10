@@ -2,17 +2,8 @@ package com.epam.rd.autocode.spring.project.service;
 
 import com.epam.rd.autocode.spring.project.dto.EmployeeDTO;
 
-import java.util.List;
-
 public interface EmployeeService {
-
-    List<EmployeeDTO> getAllEmployees();
-
-    EmployeeDTO getEmployeeByEmail(String email);
-
-    EmployeeDTO updateEmployeeByEmail(String email, EmployeeDTO employee);
-
-    void deleteEmployeeByEmail(String email);
-
-    EmployeeDTO addEmployee(EmployeeDTO employee);
+    EmployeeDTO getByEmail(String email);
+    EmployeeDTO updateProfile(String email, EmployeeDTO dto);
+    void changePassword(String email, String oldPassword, String newPassword);
 }

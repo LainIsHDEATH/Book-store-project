@@ -1,0 +1,20 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><body>
+<div th:replace="fragments/navbar :: navbar"></div>
+<form th:action="@{/employee/books/save}" th:object="${book}" method="post">
+<input type="hidden" th:field="*{id}"/>
+<input th:field="*{nameEn}" placeholder="Name EN"/>
+<input th:field="*{nameUk}" placeholder="Name UK"/>
+<input th:field="*{authorEn}" placeholder="Author EN"/>
+<input th:field="*{authorUk}" placeholder="Author UK"/>
+<textarea th:field="*{descriptionEn}" placeholder="Description EN"></textarea>
+<textarea th:field="*{descriptionUk}" placeholder="Description UK"></textarea>
+<select th:field="*{genre}"><option th:each="g:${genres}" th:value="${g}" th:text="${g}"></option></select>
+<select th:field="*{ageGroup}"><option th:each="a:${ageGroups}" th:value="${a}" th:text="${a}"></option></select>
+<select th:field="*{language}"><option th:each="l:${languages}" th:value="${l}" th:text="${l}"></option></select>
+<input type="date" th:field="*{publicationDate}"/>
+<input type="number" th:field="*{pages}"/>
+<input type="number" step="0.01" th:field="*{price}"/>
+<input type="number" th:field="*{stockCount}"/>
+<button type="submit">Save</button>
+</form>
+</body></html>
