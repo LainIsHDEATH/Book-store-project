@@ -7,6 +7,8 @@ import com.epam.rd.autocode.spring.project.repo.ClientRepository;
 import com.epam.rd.autocode.spring.project.repo.EmployeeRepository;
 import com.epam.rd.autocode.spring.project.service.PasswordResetService;
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -123,8 +125,8 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");
-            helper.setFrom(from);
-            helper.setTo(to);
+            helper.setFrom(strictAddress(from));
+            helper.setTo(strictAddress(to));
             helper.setSubject(subject);
             helper.setText(html, true);
             mailSender.send(message);
@@ -168,6 +170,18 @@ public class PasswordResetServiceImpl implements PasswordResetService {
             this.email = email;
             this.type = type;
             this.blocked = blocked;
+        }
+    }
+
+    private InternetAddress strictAddress(String raw) {
+        if (raw == null) throw new IllegalArgumentException("email is null");
+        String s = raw.trim();
+        try {
+            InternetAddress addr = new InternetAddress(s, true); // strict
+            addr.validate();
+            return addr;
+        } catch (AddressException e) {
+            throw new IllegalArgumentException("Invalid email: [" + s + "]", e);
         }
     }
 }

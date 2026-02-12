@@ -32,7 +32,6 @@ import java.math.BigDecimal;
 @Controller
 @RequestMapping("/employees")
 @PreAuthorize("hasRole('EMPLOYEE')")
-@Slf4j
 public class EmployeeController {
 
     private final BookService bookService;
@@ -43,7 +42,6 @@ public class EmployeeController {
 
     @GetMapping("/books")
     public String listBooks(Model model) {
-        log.debug("Employee accessing book management list");
         model.addAttribute("books", bookService.getAllBooks());
         return "employee/book-list";
     }
@@ -74,7 +72,6 @@ public class EmployeeController {
                            Model model) {
 
         if (bindingResult.hasErrors()) {
-            log.error("Validation errors while saving book: {}", bindingResult.getAllErrors());
             addFormAttributes(model);
             return "employee/book-form";
         }
@@ -96,7 +93,6 @@ public class EmployeeController {
 
     @GetMapping("/orders")
     public String listOrders(Model model) {
-        log.debug("Employee accessing order management list");
         model.addAttribute("orders", orderService.getAllOrders());
         var statuses = java.util.Arrays.stream(OrderStatus.values())
                 .filter(s -> s != OrderStatus.CART)
@@ -142,7 +138,6 @@ public class EmployeeController {
 
     @GetMapping("/clients/add")
     public String showClientAddForm(Model model) {
-        log.debug("Employee opening form to create a new client");
         ClientDTO dto = new ClientDTO();
         dto.setBalance(BigDecimal.ZERO);
         model.addAttribute("client", dto);
@@ -251,10 +246,4 @@ public class EmployeeController {
         }
         return null;
     }
-
-//    @PostMapping("/profile/change-password")
-//    public String requestChange(Authentication auth) {
-//        passwordResetService.sendResetLink(auth.getName());
-//        return "redirect:/employees/profile?message=Reset+link+sent";
-//    }
 }
