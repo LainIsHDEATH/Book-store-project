@@ -1,0 +1,14 @@
+/*orders my*/
+.container { max-width: 980px; margin: 24px auto; padding: 0 12px; font-family: Arial, sans-serif; }
+.header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; }
+.table { width:100%; border-collapse: collapse; }
+.table th, .table td { padding: 10px; border-bottom: 1px solid #e5e5e5; vertical-align: top; }
+.table th { text-align:left; background:#f7f7f7; }
+.muted { color:#777; font-size: 12px; }
+.badge { padding: 3px 8px; border-radius: 10px; font-size: 12px; display:inline-block; }
+.badge-paid { background:#e8f5e9; color:#1b5e20; }
+.badge-canceled { background:#ffebee; color:#b71c1c; }
+.actions { display:flex; gap:8px; }
+.btn { padding: 6px 10px; border: 1px solid #ccc; background:#fff; cursor:pointer; border-radius: 6px; }
+.btn-danger { border-color:#f2b8b5; color:#b71c1c; }
+.btn-link { border:none; background:none; color:#1565c0; padding:0; cursor:pointer; }

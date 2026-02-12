@@ -1,32 +1,44 @@
 package com.epam.rd.autocode.spring.project.controller;
 
-import com.epam.rd.autocode.spring.project.dto.OrderDTO;
 import com.epam.rd.autocode.spring.project.service.OrderService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
+import java.security.Principal;
 
-@RequiredArgsConstructor
-@RestController
+@Controller
 @RequestMapping("/orders")
+@PreAuthorize("hasRole('CLIENT')")
+@RequiredArgsConstructor
 public class OrderController {
 
     private final OrderService orderService;
 
-    @GetMapping("/client/{email}")
-    public List<OrderDTO> byClient(@PathVariable String email) {
-        return orderService.getOrdersByClient(email);
+    @GetMapping("/my")
+    public String myOrders(Authentication auth, Model model) {
+        String email = auth.getName();
+        model.addAttribute("orders", orderService.getMyOrders(email));
+        return "orders/my";
     }
 
-    @GetMapping("/employee/{email}")
-    public List<OrderDTO> byEmployee(@PathVariable String email) {
-        return orderService.getOrdersByEmployee(email);
+    @PostMapping("/{id}/cancel")
+    public String cancel(Authentication auth, @PathVariable Long id) {
+        String email = auth.getName();
+        orderService.cancelMyOrder(email, id);
+        return "redirect:/orders/my";
     }
 
-    @PostMapping
-    public OrderDTO add(@RequestBody @Valid OrderDTO dto) {
-        return orderService.addOrder(dto);
+    @GetMapping("/{id}")
+    public String viewOrder(Authentication auth, @PathVariable Long id, Model model) {
+        String email = auth.getName();
+        model.addAttribute("order", orderService.getMyOrder(email, id)); // ownership check
+        return "orders/order-details";
     }
 }

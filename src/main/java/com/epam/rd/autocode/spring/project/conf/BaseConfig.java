@@ -12,6 +12,7 @@ import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Locale;
 
 @Configuration
@@ -33,15 +34,17 @@ public class BaseConfig implements WebMvcConfigurer {
 
     @Bean
     public LocaleResolver localeResolver() {
-        CookieLocaleResolver lr = new CookieLocaleResolver("LOCALE");
+        CookieLocaleResolver lr = new CookieLocaleResolver();
         lr.setDefaultLocale(Locale.ENGLISH);
+        lr.setCookiePath("/");
+        lr.setCookieMaxAge(Duration.ofDays(365));
         return lr;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-        lci.setParamName("lang");
-        registry.addInterceptor(lci);
+        var interceptor = new LocaleChangeInterceptor();
+        interceptor.setParamName("lang");
+        registry.addInterceptor(interceptor);
     }
 }

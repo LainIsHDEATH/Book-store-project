@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{orders.details.title.page}">Order details</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/book-list-form.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: topbar}"></div>
+
+<div class="container">
+
+    <div class="page-head">
+        <div>
+            <h1 class="title" th:text="#{orders.details.title.order(${order.orderId})}">Order #1</h1>
+            <div class="muted" th:text="${#temporals.format(order.orderDate, 'dd.MM.yyyy HH:mm')}">date</div>
+        </div>
+
+        <div class="actions">
+            <span class="badge"
+                  th:classappend="${order.status.name() == 'PAID'} ? ' badge-paid' : ' badge-canceled'"
+                  th:text="#{orderStatus.__${order.status}__}">
+                PAID
+            </span>
+
+            <a class="btn btn-ghost" th:href="@{/orders/my}" th:text="#{orders.details.backToOrders}">
+                ← Back
+            </a>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th th:text="#{orders.details.table.book}">Book</th>
+            <th style="width:140px;" th:text="#{orders.details.table.price}">Price</th>
+            <th style="width:120px;" th:text="#{orders.details.table.qty}">Qty</th>
+            <th style="width:160px;" th:text="#{orders.details.table.sum}">Sum</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="it : ${order.bookItems}">
+            <td>
+                <div style="font-weight:800;"
+                     th:text="${#locale.language == 'uk' ? it.bookNameUk : it.bookNameEn}">
+                    Book
+                </div>
+                <div class="muted">
+                    <span th:text="#{orders.details.item.bookId}">ID</span>:
+                    <span th:text="${it.bookId}">1</span>
+                </div>
+            </td>
+
+            <td>
+                <b th:text="${it.unitPrice}">0</b>
+                <span th:text="#{currency.uah}">₴</span>
+            </td>
+
+            <td th:text="${it.quantity}">1</td>
+
+            <td>
+                <b th:text="${it.unitPrice.multiply(T(java.math.BigDecimal).valueOf(it.quantity.longValue()))}">0</b>
+                <span th:text="#{currency.uah}">₴</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="card" style="margin-top:14px;">
+        <div class="card-body" style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+            <div style="font-weight:800; color: var(--muted);" th:text="#{orders.details.total}">
+                Total:
+            </div>
+
+            <div style="font-size:18px;">
+                <b th:text="${order.price}">0</b>
+                <span th:text="#{currency.uah}">₴</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

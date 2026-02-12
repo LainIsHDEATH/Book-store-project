@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{employee.orders.title.page}">Orders</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/book-list-form.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: topbar}"></div>
+
+<div class="container">
+
+    <div class="page-head">
+        <h1 class="title" th:text="#{employee.orders.title.page}">Orders</h1>
+    </div>
+
+    <!-- translated error from redirect: expect param.errorKey -->
+    <div class="alert alert-warn"
+         th:if="${param.errorKey}"
+         th:text="#{${param.errorKey}}">
+        Error
+    </div>
+
+    <!-- empty -->
+    <div class="card" th:if="${#lists.isEmpty(orders)}">
+        <div class="card-body">
+            <div class="muted" th:text="#{employee.orders.empty}">No orders.</div>
+        </div>
+    </div>
+
+    <!-- not empty -->
+    <table class="table" th:if="${!#lists.isEmpty(orders)}">
+        <thead>
+        <tr>
+            <th style="width:90px;" th:text="#{employee.orders.table.id}">ID</th>
+            <th style="width:220px;" th:text="#{employee.orders.table.client}">Client</th>
+            <th style="width:220px;" th:text="#{employee.orders.table.employee}">Processed by employee</th>
+            <th style="width:320px;" th:text="#{employee.orders.table.date}">Date</th>
+            <th style="width:140px;" th:text="#{employee.orders.table.price}">Price</th>
+            <th style="width:160px;" th:text="#{employee.orders.table.status}">Status</th>
+            <th style="width:320px;" th:text="#{employee.orders.table.actions}">Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="o : ${orders}">
+            <td>
+                <a class="btn btn-ghost"
+                   style="padding:6px 10px;"
+                   th:href="@{/orders/{id}(id=${o.orderId})}"
+                   th:text="${o.orderId}">
+                    1
+                </a>
+            </td>
+
+            <td>
+                <div th:text="${o.clientEmail}">client@mail.com</div>
+            </td>
+
+            <td>
+                <div th:text="${o.employeeEmail != null ? o.employeeEmail : '-'}">-</div>
+            </td>
+
+            <td>
+                <div class="muted">
+                    <span th:text="#{employee.orders.label.createdAt}">Created at</span>
+                </div>
+                <div th:text="${#temporals.format(o.orderDate, 'dd.MM.yyyy HH:mm')}">12.02.2026 10:00</div>
+            </td>
+
+            <td>
+                <b th:text="${o.price}">0</b> <span th:text="#{currency.uah}">₴</span>
+            </td>
+
+            <td>
+                <span class="badge"
+                      th:classappend="${o.status.name() == 'PAID'} ? ' badge-paid' :
+                                      (${o.status.name() == 'CANCELED'} ? ' badge-canceled' : '')"
+                      th:text="#{orderStatus.__${o.status}__}">
+                    NEW
+                </span>
+            </td>
+
+            <td class="actions">
+                <!-- change status -->
+                <form method="post"
+                      th:action="@{/employees/orders/update-status}"
+                      style="display:inline-flex; gap:8px; align-items:center; margin:0;">
+                    <input type="hidden" name="orderId" th:value="${o.orderId}"/>
+
+                    <select class="input" name="status" style="min-width:160px;">
+                        <option th:each="st : ${statuses}"
+                                th:value="${st}"
+                                th:text="#{orderStatus.__${st}__}"
+                                th:selected="${st} == ${o.status}">
+                        </option>
+                    </select>
+
+                    <button class="btn" type="submit" th:text="#{action.update}">Update</button>
+                </form>
+
+                <a class="btn btn-ghost"
+                   th:href="@{/employees/orders/{id}(id=${o.orderId})}"
+                   th:text="#{action.view}">
+                    View
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>

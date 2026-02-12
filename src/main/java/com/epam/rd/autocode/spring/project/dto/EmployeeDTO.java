@@ -8,36 +8,40 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class EmployeeDTO{
     private Long id;
 
-    @NotBlank
-    @Email
+    @NotBlank(message = "{auth.email.notBlank}")
+    @Email(message = "{auth.email.invalid}")
+    @Size(max = 255, message = "{auth.email.size}")
     private String email;
 
-    @Size(min = 8, max = 20, message = "Від 8 до 20 символів")
+    @NotBlank(message = "{auth.password.notBlank}")
+    @Size(min = 8, max = 20, message = "{auth.password.size}")
     @Pattern(
-            regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).*$",
-            message = "Має містити цифру та велику літеру"
+            regexp = "^(?=\\S+$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).*$",
+            message = "{auth.password.pattern}"
     )
     private String password;
 
-    @NotBlank(message = "")
+    @NotBlank(message = "{employee.name.notBlank}")
+    @Size(min = 2, max = 64, message = "{employee.name.size}")
     @Pattern(
             regexp = "^[A-Za-zА-Яа-яЇїІіЄєҐґ'\\- ]+$",
-            message = ""
+            message = "{employee.name.pattern}"
     )
     private String name;
 
     @Pattern(
-            regexp = "^\\+?[0-9\\-() ]{7,15}$",
-            message = ""
+            regexp = "^$|^\\+?[0-9\\-() ]{7,15}$",
+            message = "{employee.phone.pattern}"
     )
     private String phone;
 
     private Boolean blocked = false;
 
-    @NotNull
+    @PastOrPresent(message = "{employee.birthDate.pastOrPresent}")
     private LocalDate birthDate;
 
 }

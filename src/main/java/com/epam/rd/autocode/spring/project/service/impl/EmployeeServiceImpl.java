@@ -1,6 +1,7 @@
 package com.epam.rd.autocode.spring.project.service.impl;
 
 import com.epam.rd.autocode.spring.project.dto.EmployeeDTO;
+import com.epam.rd.autocode.spring.project.dto.UpdateEmployeeProfileDTO;
 import com.epam.rd.autocode.spring.project.exception.AlreadyExistException;
 import com.epam.rd.autocode.spring.project.exception.NotFoundException;
 import com.epam.rd.autocode.spring.project.model.Employee;
@@ -36,12 +37,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDTO updateEmployeeByEmail(String email, EmployeeDTO employee) {
+    public EmployeeDTO updateProfile(String email, UpdateEmployeeProfileDTO employee) {
         Employee e = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Employee not found: " + email));
 
-        e.setEmail(employee.getEmail());
-        e.setPassword(employee.getPassword());
         e.setName(employee.getName());
         e.setBirthDate(employee.getBirthDate());
         e.setPhone(employee.getPhone());
@@ -50,7 +49,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void deleteEmployeeByEmail(String email) {
+    public void deleteProfile(String email) {
         Employee e = employeeRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("Employee not found: " + email));
         employeeRepository.delete(e);
@@ -66,7 +65,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     private static EmployeeDTO toDto(Employee e) {
-        return new EmployeeDTO(e.getEmail(), e.getPassword(), e.getName(), e.getBirthDate(), e.getPhone());
+        return EmployeeDTO.builder()
+                .email(e.getEmail())
+                .name(e.getName())
+                .birthDate(e.getBirthDate())
+                .phone(e.getPhone())
+                .build();
     }
 
     private static Employee toEntity(EmployeeDTO d) {

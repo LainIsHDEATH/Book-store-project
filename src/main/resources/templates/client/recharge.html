@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Balance recharge</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/book-list-form.css}">
+    <link rel="stylesheet" th:href="@{/css/recharge.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: topbar}"></div>
+
+<div class="container">
+
+    <div class="page-head">
+        <h1 class="title" th:text="#{recharge.heading}">Balance recharge</h1>
+
+        <a class="btn btn-ghost"
+           th:href="@{/clients/profile}"
+           th:text="#{action.back}">
+            Back
+        </a>
+    </div>
+
+    <!-- success -->
+    <div class="alert alert-ok" th:if="${param.success}" th:text="#{message.recharge.success}">
+        Balance updated successfully.
+    </div>
+
+    <div class="card recharge-card">
+        <div class="card-body">
+
+            <div class="muted recharge-balance">
+                <span th:text="#{recharge.balance}">Balance</span>:
+                <b th:text="${client.balance}">0</b>
+                <span th:text="#{currency.uah}">₴</span>
+            </div>
+
+            <form method="post"
+                  th:action="@{/clients/recharge}"
+                  th:object="${form}"
+                  class="recharge-form"
+                  novalidate>
+
+                <div>
+                    <div class="label" th:text="#{recharge.amount}">Amount</div>
+
+                    <input class="input"
+                           type="number"
+                           step="0.01"
+                           th:field="*{amount}"
+                           th:placeholder="#{recharge.placeholder.amount}"/>
+
+                    <div class="err"
+                         th:if="${#fields.hasErrors('amount')}"
+                         th:errors="*{amount}">
+                    </div>
+                </div>
+
+                <div class="actions recharge-actions">
+                    <button class="btn" type="submit" th:text="#{recharge.action.topup}">
+                        Top up
+                    </button>
+
+                    <a class="btn btn-ghost" th:href="@{/clients/profile}" th:text="#{action.cancel}">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

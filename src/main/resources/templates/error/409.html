@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{error.error409.title}">Conflict</title>
+    <link rel="stylesheet" th:href="@{/css/book-list-form.css}">
+    <style>
+        .error-wrap { max-width: 760px; margin: 0 auto; padding: 24px; }
+        .error-code { font-size: 52px; font-weight: 900; letter-spacing: -0.04em; margin: 0; }
+        .error-title { font-size: 20px; font-weight: 800; margin: 8px 0 6px; }
+        .error-text { margin: 0; }
+        .error-actions { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    </style>
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: topbar}"></div>
+
+<div class="container">
+    <div class="card error-wrap">
+        <div class="card-body">
+            <p class="error-code">409</p>
+            <div class="error-title" th:text="#{error.error409.heading}">Conflict</div>
+            <p class="muted error-text"
+               th:text="${message != null ? message : #{error.error409.text}}">
+                The request could not be completed due to a conflict.
+            </p>
+
+<!--            <div class="muted" th:if="${path}">-->
+<!--                <span th:text="#{error.request.path}">Path</span>:-->
+<!--                <span class="mono" th:text="${path}">/some/path</span>-->
+<!--            </div>-->
+
+            <div class="error-actions">
+                <a class="btn" th:href="@{/}" th:text="#{action.backToHome}">Home</a>
+                <a class="btn btn-ghost" href="javascript:history.back()" th:text="#{action.back}">
+                    Back
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

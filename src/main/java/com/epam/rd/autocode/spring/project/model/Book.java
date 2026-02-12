@@ -34,6 +34,7 @@ public class Book {
     @Column(name = "age_group")
     private AgeGroup ageGroup;
 
+    @Column(name = "price")
     private BigDecimal price;
 
     @Column(name = "publication_date")

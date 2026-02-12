@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{employee.books.title.page}">Books list</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/book-list-form.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: topbar}"></div>
+
+<div class="container">
+    <div class="page-head">
+        <h1 class="title" th:text="#{employee.books.title.page}">Books</h1>
+        <a class="btn" th:href="@{/employees/books/add}" th:text="#{employee.books.action.add}">
+            + Add book
+        </a>
+    </div>
+
+    <div class="alert alert-ok" th:if="${param.created}" th:text="#{employee.books.alert.created}">
+        Book created.
+    </div>
+    <div class="alert alert-ok" th:if="${param.updated}" th:text="#{employee.books.alert.updated}">
+        Book updated.
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th style="width:80px;" th:text="#{table.id}">ID</th>
+            <th th:text="#{employee.books.table.name}">Name</th>
+            <th style="width:160px;" th:text="#{table.price}">Price</th>
+            <th style="width:160px;" th:text="#{employee.books.table.stock}">Stock</th>
+            <th style="width:320px;" th:text="#{table.actions}">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="b : ${books}">
+            <td th:text="${b.id}">1</td>
+            <td>
+                <div th:text="${#locale.language == 'uk' ? b.nameUk : b.nameEn}">Name</div>
+                <div class="muted" th:text="${#locale.language == 'uk' ? b.authorUk : b.authorEn}">Author</div>
+            </td>
+            <td>
+                <b th:text="${b.price}">0</b> <span th:text="#{currency.uah}">₴</span>
+            </td>
+            <td th:text="${b.stockCount}">0</td>
+            <td class="actions">
+                <a class="btn" th:href="@{/employees/books/edit/{id}(id=${b.id})}" th:text="#{action.edit}">
+                    Edit
+                </a>
+                <a class="btn btn-danger" th:text="#{action.delete}"
+                   th:href="@{/employees/books/delete/{id}(id=${b.id})}"
+                   onclick="return confirm(this.getAttribute('data-confirm'));"
+                   th:attr="data-confirm=#{employee.books.confirm.delete}">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

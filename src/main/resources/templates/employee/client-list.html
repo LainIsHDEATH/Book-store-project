@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{employee.clients.title.page}">Clients list</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/book-list-form.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: topbar}"></div>
+
+<div class="container">
+    <div class="page-head">
+        <h1 class="title" th:text="#{employee.clients.title.page}">Clients</h1>
+        <a class="btn" th:href="@{/employees/clients/add}" th:text="#{employee.clients.action.add}">
+            + Add client
+        </a>
+    </div>
+
+    <div class="alert alert-ok" th:if="${param.created}" th:text="#{employee.clients.alert.created}">Client created.</div>
+    <div class="alert alert-ok" th:if="${param.updated}" th:text="#{employee.clients.alert.updated}">Client updated.</div>
+    <div class="alert alert-ok" th:if="${param.deleted}" th:text="#{employee.clients.alert.deleted}">Client deleted.</div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th style="width:80px;" th:text="#{table.id}">ID</th>
+            <th th:text="#{field.email}">Email</th>
+            <th th:text="#{field.name}">Name</th>
+            <th style="width:160px;" th:text="#{employee.clients.table.balance}">Balance</th>
+            <th style="width:140px;" th:text="#{table.status}">Status</th>
+            <th style="width:320px;" th:text="#{table.actions}">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="c : ${clients}">
+            <td th:text="${c.id}">1</td>
+            <td th:text="${c.email}">mail</td>
+            <td th:text="${c.name}">name</td>
+            <td>
+                <b th:text="${c.balance}">0</b> <span th:text="#{currency.uah}">₴</span>
+            </td>
+            <td>
+    <span class="badge"
+          th:classappend="${c.isBlocked} ? ' badge-danger' : ' badge-ok'"
+          th:text="${c.isBlocked} ? #{status.blocked} : #{status.active}">
+        active
+    </span>
+            </td>
+            <td class="actions">
+                <a class="btn" th:href="@{/employees/clients/edit/{id}(id=${c.id})}" th:text="#{action.edit}">Edit</a>
+                <form th:action="@{/employees/clients/toggle-block/{id}(id=${c.id})}"
+                      method="post" style="display:inline;">
+                    <button class="btn"
+                            th:classappend="${c.isBlocked} ? ' btn-secondary' : ' btn-warning'"
+                            type="submit"
+                            th:text="${c.isBlocked} ? #{action.unblock} : #{action.block}">
+                        Block
+                    </button>
+                </form>
+                <form th:action="@{/employees/clients/delete/{id}(id=${c.id})}"
+                      method="post" style="display:inline;"
+                      onsubmit="return confirm(this.getAttribute('data-confirm'));"
+                      th:attr="data-confirm=#{employee.clients.confirm.delete}">
+                    <button class="btn btn-danger" type="submit" th:text="#{action.delete}">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

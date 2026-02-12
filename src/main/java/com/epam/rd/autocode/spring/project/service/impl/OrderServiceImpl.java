@@ -2,23 +2,28 @@ package com.epam.rd.autocode.spring.project.service.impl;
 
 import com.epam.rd.autocode.spring.project.dto.BookItemDTO;
 import com.epam.rd.autocode.spring.project.dto.OrderDTO;
+import com.epam.rd.autocode.spring.project.exception.InvalidBalanceException;
 import com.epam.rd.autocode.spring.project.exception.NotFoundException;
 import com.epam.rd.autocode.spring.project.model.*;
+import com.epam.rd.autocode.spring.project.model.enums.OrderStatus;
 import com.epam.rd.autocode.spring.project.repo.BookRepository;
 import com.epam.rd.autocode.spring.project.repo.ClientRepository;
 import com.epam.rd.autocode.spring.project.repo.EmployeeRepository;
 import com.epam.rd.autocode.spring.project.repo.OrderRepository;
 import com.epam.rd.autocode.spring.project.service.OrderService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
@@ -26,78 +31,156 @@ public class OrderServiceImpl implements OrderService {
     private final EmployeeRepository employeeRepository;
     private final BookRepository bookRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository,
-                            ClientRepository clientRepository,
-                            EmployeeRepository employeeRepository,
-                            BookRepository bookRepository) {
-        this.orderRepository = orderRepository;
-        this.clientRepository = clientRepository;
-        this.employeeRepository = employeeRepository;
-        this.bookRepository = bookRepository;
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderDTO> getMyOrders(String email){
+        Client client = clientRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Client not found: " + email));
+
+        return orderRepository.findByClientId(client.getId()).stream()
+                .filter(o -> o.getStatus() != OrderStatus.CART)
+                .map(OrderServiceImpl::toDto)
+                .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderDTO> getOrdersByClient(String clientEmail) {
-        return orderRepository.findByClient_Email(clientEmail).stream().map(OrderServiceImpl::toDto).toList();
+    public List<OrderDTO> getAllOrders() {
+        return orderRepository.findAll().stream()
+                .filter(o -> o.getStatus() != OrderStatus.CART)
+                .map(OrderServiceImpl::toDto)
+                .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<OrderDTO> getOrdersByEmployee(String employeeEmail) {
-        return orderRepository.findByEmployee_Email(employeeEmail).stream().map(OrderServiceImpl::toDto).toList();
+    public OrderDTO getById(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Order not found: " + id));
+
+        return toDto(order);
     }
 
     @Override
-    public OrderDTO addOrder(OrderDTO dto) {
-        Client client = clientRepository.findByEmail(dto.getClientEmail())
-                .orElseThrow(() -> new NotFoundException("Client not found: " + dto.getClientEmail()));
+    @Transactional(readOnly = true)
+    public OrderDTO getMyOrder(String email, Long orderId) {
+        Client client = clientRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Client not found: " + email));
 
-        Employee employee = null;
-        if (dto.getEmployeeEmail() != null && !dto.getEmployeeEmail().isBlank()) {
-            employee = employeeRepository.findByEmail(dto.getEmployeeEmail())
-                    .orElseThrow(() -> new NotFoundException("Employee not found: " + dto.getEmployeeEmail()));
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order not found: " + orderId));
+
+        if (!order.getClient().getId().equals(client.getId())) {
+            throw new NotFoundException("Order not found: " + orderId);
         }
 
-        LocalDateTime orderDate = dto.getOrderDate() != null ? dto.getOrderDate() : LocalDateTime.now();
-
-        Order order = new Order(null, client, employee, orderDate, BigDecimal.ZERO, new ArrayList<>());
-        List<BookItem> items = new ArrayList<>();
-
-        BigDecimal total = BigDecimal.ZERO;
-        for (BookItemDTO itemDto : dto.getBookItems()) {
-            Book book = bookRepository.findByName(itemDto.getBookName())
-                    .orElseThrow(() -> new NotFoundException("Book not found: " + itemDto.getBookName()));
-
-            BookItem item = new BookItem(null, itemDto.getQuantity(), book, order);
-            items.add(item);
-
-            BigDecimal line = book.getPrice().multiply(BigDecimal.valueOf(itemDto.getQuantity()));
-            total = total.add(line);
-        }
-
-        order.setBookItems(items);
-        order.setPrice(total);
-
-        // Optional "store logic": decrease balance if enough
-        if (client.getBalance() != null && client.getBalance().compareTo(total) >= 0) {
-            client.setBalance(client.getBalance().subtract(total));
-            clientRepository.save(client);
-        }
-
-        Order saved = orderRepository.save(order);
-        return toDto(saved);
+        return toDto(order);
     }
 
-    private static OrderDTO toDto(Order o) {
-        String clientEmail = o.getClient() != null ? o.getClient().getEmail() : null;
-        String employeeEmail = o.getEmployee() != null ? o.getEmployee().getEmail() : null;
+    @Override
+    @Transactional
+    public OrderDTO checkout(String email) {
+        Client client = clientRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Client not found: " + email));
 
-        List<BookItemDTO> items = o.getBookItems() == null ? List.of() :
-                o.getBookItems().stream()
-                        .map(bi -> new BookItemDTO(bi.getBook().getName(), bi.getQuantity()))
-                        .toList();
+        Order order = orderRepository.findByClientIdAndStatus(client.getId(), OrderStatus.CART)
+                .orElseThrow(() -> new NotFoundException("Cart not found: " + email));
 
-        return new OrderDTO(clientEmail, employeeEmail, o.getOrderDate(), o.getPrice(), items);
+        BigDecimal total = order.getPrice();
+        if (client.getBalance().compareTo(total) < 0) {
+            throw new InvalidBalanceException("Client does not have enough balance: " + email);
+        }
+        client.decrementBalance(total);
+        order.setStatus(OrderStatus.PAID);
+        order.setOrderDate(Instant.now());
+        orderRepository.save(order);
+        clientRepository.save(client);
+
+        return OrderDTO.builder()
+                .orderId(order.getId())
+                .status(order.getStatus())
+                .clientEmail(email)
+                .employeeEmail(null)
+                .orderDate(LocalDateTime.ofInstant(order.getOrderDate(), ZoneId.systemDefault()))
+                .price(order.getPrice())
+                .bookItems(order.getItems().stream()
+                        .map(it -> BookItemDTO.builder()
+                                .bookNameEn(it.getBook().getNameEn())
+                                .bookNameUk(it.getBook().getNameUk())
+                                .bookItemId(it.getId())
+                                .bookId(it.getBook().getId())
+                                .orderId(it.getOrder().getId())
+                                .quantity(it.getQuantity())
+                                .unitPrice(it.getUnitPrice())
+                                .build()
+                        ).toList())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public void cancelMyOrder(String email, Long orderId){
+        Client client = clientRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Client not found: " + email));
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order not found: " + orderId));
+
+        if (!order.getClient().getId().equals(client.getId())) {
+            throw new NotFoundException("Order not found: " + orderId);
+        }
+
+        if (order.getStatus() == OrderStatus.CANCELED) return;
+
+        order.setStatus(OrderStatus.CANCELED);
+    }
+
+    @Override
+    @Transactional
+    public void updateStatus(Long orderId, OrderStatus status, String employeeEmail){
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("Order not found: " + orderId));
+
+        Employee employee = employeeRepository.findByEmail(employeeEmail)
+                        .orElseThrow(() -> new NotFoundException("Employee not found: " + employeeEmail));
+
+        order.setStatus(status);
+        order.setEmployee(employee);
+        orderRepository.save(order);
+    }
+
+
+    private static OrderDTO toDto(Order order) {
+        String clientEmail = order.getClient() != null
+                ? order.getClient().getEmail()
+                : null;
+
+        String employeeEmail = order.getEmployee() != null
+                ? order.getEmployee().getEmail()
+                : null;
+
+        List<BookItemDTO> items = order.getItems() == null
+                ? List.of()
+                : order.getItems().stream()
+                .map(it -> BookItemDTO.builder()
+                        .bookNameEn(it.getBook().getNameEn())
+                        .bookNameUk(it.getBook().getNameUk())
+                        .bookItemId(it.getId())
+                        .bookId(it.getBook().getId())
+                        .orderId(it.getOrder().getId())
+                        .quantity(it.getQuantity())
+                        .unitPrice(it.getUnitPrice())
+                        .build()
+                ).toList();
+
+        return OrderDTO.builder()
+                .orderId(order.getId())
+                .clientEmail(clientEmail)
+                .employeeEmail(employeeEmail)
+                .orderDate(LocalDateTime.ofInstant(order.getOrderDate(), ZoneId.systemDefault()))
+                .status(order.getStatus())
+                .price(order.getPrice())
+                .bookItems(items)
+                .build();
     }
 }

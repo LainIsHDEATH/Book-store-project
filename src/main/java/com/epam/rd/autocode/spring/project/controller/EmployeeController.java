@@ -1,27 +1,37 @@
 package com.epam.rd.autocode.spring.project.controller;
 
 import com.epam.rd.autocode.spring.project.dto.BookDTO;
+import com.epam.rd.autocode.spring.project.dto.ClientDTO;
 import com.epam.rd.autocode.spring.project.dto.EmployeeDTO;
+import com.epam.rd.autocode.spring.project.dto.UpdateEmployeeProfileDTO;
+import com.epam.rd.autocode.spring.project.exception.AlreadyExistException;
+import com.epam.rd.autocode.spring.project.exception.InvalidBalanceException;
 import com.epam.rd.autocode.spring.project.model.enums.AgeGroup;
+import com.epam.rd.autocode.spring.project.model.enums.Language;
+import com.epam.rd.autocode.spring.project.model.enums.OrderStatus;
 import com.epam.rd.autocode.spring.project.service.*;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.util.List;
+import java.math.BigDecimal;
+
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/employee")
-@PreAuthorize("hasAuthority('EMPLOYEE')")
+@RequestMapping("/employees")
+@PreAuthorize("hasRole('EMPLOYEE')")
 @Slf4j
 public class EmployeeController {
 
@@ -29,9 +39,9 @@ public class EmployeeController {
     private final OrderService orderService;
     private final ClientService clientService;
     private final EmployeeService employeeService;
-    private final LoginAttemptService loginAttemptService;
-    private final UserService userService;
-    private final PasswordResetService passwordResetService;
+    private final RefreshTokenService refreshTokenService;
+//    private final LoginAttemptService loginAttemptService;
+//    private final PasswordResetService passwordResetService;
 
     @GetMapping("/books")
     public String listBooks(Model model) {
@@ -56,7 +66,7 @@ public class EmployeeController {
 
     private void addFormAttributes(Model model) {
         model.addAttribute("ageGroups", AgeGroup.values());
-        model.addAttribute("languages", bookService.getAllLanguages());
+        model.addAttribute("languages", Language.values());
         model.addAttribute("allGenres", bookService.getAllGenresTranslated());
     }
 
@@ -71,40 +81,52 @@ public class EmployeeController {
             return "employee/book-form";
         }
 
-        if (book.getId() != null) {
-            bookService.updateBookByName(book.getNameEn(), book);
-        } else {
+        if (book.getId() == null) {
             bookService.addBook(book);
+            return "redirect:/employees/books?created=true";
+        } else {
+            bookService.updateBookId(book.getId(), book);
+            return "redirect:/employees/books?updated=true";
         }
-
-        return "redirect:/employee/books";
     }
 
     @GetMapping("/books/delete/{id}")
     public String deleteBook(@PathVariable Long id) {
         bookService.deleteBookById(id);
-        return "redirect:/employee/books";
+        return "redirect:/employees/books";
     }
 
     @GetMapping("/orders")
     public String listOrders(Model model) {
         log.debug("Employee accessing order management list");
         model.addAttribute("orders", orderService.getAllOrders());
+        var statuses = java.util.Arrays.stream(OrderStatus.values())
+                .filter(s -> s != OrderStatus.CART)
+                .toList();
+
+        model.addAttribute("statuses", statuses);
         return "employee/order-list";
+    }
+
+    @GetMapping("/orders/{id}")
+    public String viewOrder(@PathVariable Long id, Model model) {
+        model.addAttribute("order", orderService.getById(id)); // ownership check
+        return "orders/order-details";
     }
 
     @PostMapping("/orders/update-status")
     public String updateStatus(@RequestParam Long orderId,
                                @RequestParam OrderStatus status,
-                               Principal principal) {
+                               Authentication auth) {
 
+        String email = auth.getName();
         try {
-            orderService.updateStatus(orderId, status, principal.getName());
+            orderService.updateStatus(orderId, status, email);
         } catch (InvalidBalanceException e) {
-            return "redirect:/employee/orders?errorMsg=" + e.getMessage();
+            return "redirect:/employees/orders?errorMsg=" + e.getMessage();
         }
 
-        return "redirect:/employee/orders";
+        return "redirect:/employees/orders";
     }
 
     @GetMapping("/clients")
@@ -116,13 +138,17 @@ public class EmployeeController {
     @GetMapping("/clients/edit/{id}")
     public String showClientEditForm(@PathVariable Long id, Model model) {
         model.addAttribute("client", clientService.getClientById(id));
+        model.addAttribute("mode", "edit");
         return "employee/client-form";
     }
 
     @GetMapping("/clients/add")
     public String showClientAddForm(Model model) {
         log.debug("Employee opening form to create a new client");
-        model.addAttribute("client", new ClientDTO());
+        ClientDTO dto = new ClientDTO();
+        dto.setBalance(BigDecimal.ZERO);
+        model.addAttribute("client", dto);
+        model.addAttribute("mode", "create");
         return "employee/client-form";
     }
 
@@ -132,93 +158,105 @@ public class EmployeeController {
                              Model model) {
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("mode", clientDto.getId() == null ? "create" : "edit");
             return "employee/client-form";
         }
 
-        clientService.saveClient(clientDto);
-        return "redirect:/employee/clients";
+        try {
+            if (clientDto.getId() == null) {
+                clientService.addClient(clientDto);
+                return "redirect:/employees/clients?created=true";
+            } else {
+                clientService.updateClientById(clientDto.getId(), clientDto);
+                return "redirect:/employees/clients?updated=true";
+            }
+        } catch (AlreadyExistException e) {
+            bindingResult.rejectValue("email", "client.email.exists", e.getMessage());
+
+            model.addAttribute("mode", "create");
+            return "employee/client-form";
+        }
     }
 
-    @GetMapping("/clients/delete/{id}")
+    @PostMapping("/clients/delete/{id}")
     public String deleteClient(@PathVariable Long id) {
-        clientService.deleteClient(id);
-        return "redirect:/employee/clients";
+        clientService.deleteClientById(id);
+        return "redirect:/employees/clients?deleted=true";
     }
 
-    @PostMapping("/clients/unlock")
-    public String unlockClient(@RequestParam String email) {
-        loginAttemptService.unlockUser(email);
-        return "redirect:/employee/clients?message=Client_unlocked&email=" + email;
-    }
-
-    @GetMapping("/clients/toggle-block/{id}")
-    public String toggleBlockClient(@PathVariable Long id) {
-        userService.toggleBlockClient(id);
-        return "redirect:/employee/clients";
+    @PostMapping("/clients/toggle-block/{id}")
+    public String toggleBlock(@PathVariable Long id) {
+        clientService.toggleBlock(id);
+        return "redirect:/employees/clients?updated=true";
     }
 
     @GetMapping("/profile")
-    public String showProfile(Principal principal, Model model) {
-        String email = principal.getName();
-        model.addAttribute("employee",
-                employeeService.getEmployeeByEmail(email));
+    public String showProfile(Authentication auth, Model model) {
+        String email = auth.getName();
+        EmployeeDTO employee = employeeService.getEmployeeByEmail(email);
+
+        UpdateEmployeeProfileDTO form = new UpdateEmployeeProfileDTO();
+        form.setName(employee.getName());
+        form.setPhone(employee.getPhone());
+        form.setBirthDate(employee.getBirthDate());
+
+        model.addAttribute("employee", employee);
+        model.addAttribute("form", form);
         return "employee/profile-form";
     }
 
     @PostMapping("/profile/save")
-    public String saveProfile(@Valid @ModelAttribute("employee") EmployeeDTO dto,
-                              BindingResult bindingResult,
-                              Principal principal) {
-
-        if (bindingResult.hasErrors()) {
+    public String saveProfile(@Valid @ModelAttribute("form") UpdateEmployeeProfileDTO form,
+                              BindingResult br,
+                              Authentication auth,
+                              Model model) {
+        if (br.hasErrors()) {
+            model.addAttribute("employee", employeeService.getEmployeeByEmail(auth.getName()));
             return "employee/profile-form";
         }
 
-        employeeService.updateProfile(principal.getName(), dto);
-        return "redirect:/employee/profile?success=true";
+        employeeService.updateProfile(auth.getName(), form);
+        return "redirect:/employees/profile?success=true";
     }
 
     @PostMapping("/profile/delete")
-    public String deleteProfile(Principal principal, HttpServletRequest request) throws ServletException {
-        String email = principal.getName();
+    public String deleteProfile(Authentication auth, HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        String email = auth.getName();
 
-        if (email.contains("@")) {
-            employeeService.deleteProfile(email);
+        employeeService.deleteProfile(email);
+
+        String refresh = getCookieValue(request, "refresh_token");
+        if (refresh != null) {
+            refreshTokenService.deleteByToken(refresh);
         }
 
-        request.logout();
+        deleteCookie(response, "access_token");
+        deleteCookie(response, "refresh_token");
+
+        SecurityContextHolder.clearContext();
 
         return "redirect:/login?deleted=true";
     }
 
-    @PostMapping("/profile/change-password")
-    public String requestChange(Principal principal) {
-        passwordResetService.sendResetLink(principal.getName());
-        return "redirect:/employee/profile?message=Reset+link+sent";
+    private void deleteCookie(HttpServletResponse response, String name) {
+        Cookie c = new Cookie(name, "");
+        c.setPath("/");
+        c.setHttpOnly(true);
+        c.setMaxAge(0);
+        response.addCookie(c);
     }
 
-//    @GetMapping
-//    public List<EmployeeDTO> all() {
-//        return employeeService.getAllEmployees();
-//    }
+    private String getCookieValue(HttpServletRequest request, String name) {
+        if (request.getCookies() == null) return null;
+        for (Cookie cookie : request.getCookies()) {
+            if (name.equals(cookie.getName())) return cookie.getValue();
+        }
+        return null;
+    }
 
-//    @GetMapping("/{email}")
-//    public EmployeeDTO one(@PathVariable String email) {
-//        return employeeService.getEmployeeByEmail(email);
-//    }
-
-//    @PostMapping
-//    public EmployeeDTO add(@RequestBody @Valid EmployeeDTO dto) {
-//        return employeeService.addEmployee(dto);
-//    }
-
-//    @PutMapping("/{email}")
-//    public EmployeeDTO update(@PathVariable String email, @RequestBody @Valid EmployeeDTO dto) {
-//        return employeeService.updateEmployeeByEmail(email, dto);
-//    }
-
-//    @DeleteMapping("/{email}")
-//    public void delete(@PathVariable String email) {
-//        employeeService.deleteEmployeeByEmail(email);
+//    @PostMapping("/profile/change-password")
+//    public String requestChange(Authentication auth) {
+//        passwordResetService.sendResetLink(auth.getName());
+//        return "redirect:/employees/profile?message=Reset+link+sent";
 //    }
 }

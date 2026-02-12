@@ -1,5 +1,6 @@
 package com.epam.rd.autocode.spring.project.model;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.Column;
@@ -27,9 +28,17 @@ public class Client extends User {
     private BigDecimal balance;
 
     @Column(name = "is_blocked")
-    private Boolean isBlocked;
+    private Boolean isBlocked = false;
 
     public Boolean isBlocked() {
         return isBlocked;
+    }
+
+    public void incrementBalance(BigDecimal amount) {
+        this.balance = this.balance.add(amount);
+    }
+
+    public void decrementBalance(BigDecimal amount) {
+        this.balance = this.balance.subtract(amount);
     }
 }

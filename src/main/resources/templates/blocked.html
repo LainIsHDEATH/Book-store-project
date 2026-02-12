@@ -1,7 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Blocked</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
 <body>
-<div th:replace="layout :: content">
+<div th:replace="~{fragments/navbar.html :: topbar}">
     <h1>Account blocked</h1>
     <p>Your account is blocked. You cannot continue.</p>
     <a th:href="@{/auth/login}">Back to login</a>

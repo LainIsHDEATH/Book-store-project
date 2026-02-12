@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS books
     genre_uk VARCHAR(100),
     age_group VARCHAR(50),
     language VARCHAR(50),
+    characteristics TEXT,
     publication_date DATE,
     pages INTEGER,
     price DECIMAL(12,2) NOT NULL,
@@ -49,7 +50,7 @@ CREATE TABLE IF NOT EXISTS orders
     id BIGSERIAL PRIMARY KEY,
     client_id BIGINT NOT NULL REFERENCES clients(id),
     employee_id BIGINT REFERENCES employees(id),
-    order_date TIMESTAMP NOT NULL,
+    order_date TIMESTAMP,
     status VARCHAR(50) NOT NULL,
     price DECIMAL(12,2) NOT NULL
 );
@@ -58,8 +59,8 @@ CREATE TABLE IF NOT EXISTS orders
 CREATE TABLE IF NOT EXISTS book_items
 (
     id BIGSERIAL PRIMARY KEY,
-    book_id BIGINT NOT NULL REFERENCES books(id),
-    order_id BIGINT NOT NULL REFERENCES orders(id),
+    book_id BIGINT NOT NULL REFERENCES books(id) ON DELETE CASCADE ,
+    order_id BIGINT NOT NULL REFERENCES orders(id) ON DELETE CASCADE ,
     quantity INTEGER NOT NULL,
     unit_price DECIMAL(12,2) NOT NULL
 );

@@ -24,10 +24,10 @@ public class Employee extends User {
         this.phone = phone;
     }
 
-    @Column(name = "BIRTH_DATE", nullable = false)
+    @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
-    @Column(name = "PHONE", nullable = false)
+    @Column(name = "phone", nullable = false)
     private String phone;
 
     @Column(name = "is_blocked")

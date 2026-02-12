@@ -1,15 +1,91 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Register</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script th:src="@{/js/scripts.js}"></script>
+</head>
 <body>
-<div th:replace="layout :: content">
-    <h1>Register</h1>
+<div th:insert="~{fragments/navbar :: topbar}"></div>
+<div class="box">
+    <h2 th:text="#{page.register.heading}">Registration</h2>
 
-    <form th:action="@{/auth/register}" method="post">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <input name="email" placeholder="email"/>
-        <input name="password" type="password" placeholder="password"/>
-        <button type="submit">Create</button>
+    <form th:action="@{/auth/register}" th:object="${registerRequest}" method="post" class="form">
+        <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/> -->
+
+        <div class="row">
+            <input class="input" th:field="*{email}" th:placeholder="#{field.email}" placeholder="Email"/>
+            <div class="err" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+        </div>
+
+        <br>
+        <div class="row">
+            <input class="input" th:field="*{name}" th:placeholder="#{field.name}" placeholder="Name"/>
+            <div class="err" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+        </div>
+
+        <br>
+        <div class="row">
+            <div class="pwd-wrap">
+                <input class="input pwd-input"
+                       th:field="*{password}"
+                       type="password"
+                       th:placeholder="#{field.password}"
+                       placeholder="Password"/>
+
+                <button class="pwd-toggle"
+                        type="button"
+                        aria-label="Show password"
+                        data-target="password">
+                    👁
+                </button>
+            </div>
+
+            <div class="err" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+        </div>
+
+        <br>
+        <div class="row">
+            <div class="pwd-wrap">
+                <input class="input pwd-input"
+                       th:field="*{confirmPassword}"
+                       type="password"
+                       th:placeholder="#{field.password.repeat}"
+                       placeholder="Repeat password"/>
+
+                <button class="pwd-toggle"
+                        type="button"
+                        aria-label="Show password"
+                        data-target="confirmPassword">
+                    👁
+                </button>
+            </div>
+
+            <div class="err" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+        </div>
+
+        <br>
+        <div class="row">
+            <label class="label" for="role" th:text="#{field.role}">Role</label>
+            <select id="role" class="input" th:field="*{role}">
+                <option th:each="r : ${roles}"
+                        th:value="${r}"
+                        th:text="#{role.__${r}__}">
+                </option>
+            </select>
+        </div>
+        <br>
+
+        <button class="btn btn-primary btn-wide" type="submit" th:text="#{action.register}">Registration</button>
     </form>
+
+    <div class="muted" style="margin-top:12px;text-align:center;">
+        <a class="link" th:href="@{/auth/login}" th:text="#{page.register.haveAccount.login}">
+            Already have an account? Login
+        </a>
+    </div>
 </div>
 </body>
 </html>

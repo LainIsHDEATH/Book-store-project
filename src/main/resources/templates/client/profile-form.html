@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{client.profile.title.page}">Client profile</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/book-list-form.css}">
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: topbar}"></div>
+
+<div class="container">
+
+    <div class="page-head">
+        <h1 class="title" th:text="#{client.profile.title.page}">Client profile</h1>
+        <a class="btn btn-ghost" th:href="@{/}" th:text="#{client.profile.action.continueShopping}">
+            Continue shopping
+        </a>
+    </div>
+
+    <!-- Alerts -->
+    <div class="alert alert-ok" th:if="${param.success}" th:text="#{client.profile.saved}">
+        Profile saved.
+    </div>
+
+    <!-- Account card -->
+    <div class="card">
+        <div class="card-body">
+
+            <div class="profile-section-head">
+                <div class="profile-section-title" th:text="#{client.profile.section.account}">Account</div>
+            </div>
+
+            <div class="profile-grid">
+
+                <div>
+                    <div class="label" th:text="#{client.profile.field.email}">Email</div>
+                    <input class="input" th:value="${client.email}" readonly/>
+                </div>
+
+                <div>
+                    <div class="label" th:text="#{client.profile.field.balance}">Balance</div>
+                    <div class="profile-inline">
+                        <input class="input" th:value="${client.balance}" readonly/>
+                        <a class="btn btn-ghost profile-recharge"
+                           th:href="@{/clients/recharge}"
+                           th:text="#{client.profile.action.recharge}">
+                            Recharge
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="profile-sep"></div>
+
+            <!-- IMPORTANT: bind to "form", not "client" -->
+            <form method="post" th:action="@{/clients/profile/save}" th:object="${form}">
+
+                <div class="profile-grid">
+
+                    <div>
+                        <div class="label" th:text="#{client.profile.field.username}">Username</div>
+                        <input class="input"
+                               th:field="*{name}"
+                               th:placeholder="#{client.profile.placeholder.name}"/>
+                        <div class="err"
+                             th:if="${#fields.hasErrors('name')}"
+                             th:errors="*{name}">
+                        </div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <button class="btn" type="submit" th:text="#{action.save}">Save</button>
+                        <a class="btn btn-ghost" th:href="@{/clients/profile}" th:text="#{action.reset}">Reset</a>
+                    </div>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Danger zone -->
+    <div class="card profile-danger">
+        <div class="card-body">
+
+            <div class="profile-section-head">
+                <div class="profile-section-title" th:text="#{client.profile.section.danger}">Danger zone</div>
+            </div>
+
+            <div class="muted" th:text="#{client.profile.danger.text}">
+                This permanently deletes your account. Orders history may become inaccessible.
+            </div>
+
+            <div class="profile-danger-actions">
+                <form method="post"
+                      th:action="@{/clients/profile/delete}"
+                      onsubmit="return confirm(this.getAttribute('data-confirm'));"
+                      th:attr="data-confirm=#{client.profile.confirm.delete}"
+                      style="margin:0;">
+                    <button class="btn btn-danger" type="submit"
+                            th:text="#{client.profile.action.deleteAccount}">
+                        Delete account
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

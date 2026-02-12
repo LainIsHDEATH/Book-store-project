@@ -30,29 +30,73 @@ VALUES
     ('client10@example.com', 'pass789', 'Bryson Chavez', false, 880.20);
 
 --changeset ivan:3
-INSERT INTO books (name_en, name_uk, author_en, author_uk, description_en, description_uk, genre, age_group, language, publication_date, pages, price, stock_count)
+INSERT INTO books
+(name_en, name_uk, author_en, author_uk, description_en, description_uk, genre_en, genre_uk, age_group, language, publication_date, pages, price, stock_count)
 VALUES
-('The Hidden Treasure', 'Прихований скарб', 'Emily White', 'Емілі Вайт', 'Adventure story', 'Пригодницька історія', 'ADVENTURE', 'TEEN', 'ENGLISH', '2018-05-15', 320, 24.99, 10),
-('Echoes of Eternity', 'Відлуння вічності', 'Daniel Black', 'Деніел Блек', 'Fantasy story', 'Фентезі історія', 'FANTASY', 'ADULT', 'UKRAINIAN', '2011-01-15', 350, 16.50, 8),
-('Whispers in the Shadows', 'Шепіт у тінях', 'Sophia Green', 'Софія Ґрін','A gripping mystery that keeps you guessing', 'Захоплива детективна історія, що тримає в напрузі','MYSTERY', 'ADULT', 'ENGLISH', '2018-08-11', 450, 29.95, 10),
-('The Starlight Sonata', 'Соната зоряного світла', 'Michael Rose', 'Майкл Роуз',
- 'A beautiful journey of love and passion', 'Прекрасна подорож кохання та пристрасті',
- 'ROMANCE', 'ADULT', 'ENGLISH', '2011-05-15', 320, 21.75, 10),
-('Beyond the Horizon', 'За обрієм', 'Alex Carter', 'Алекс Картер',
- 'An epic sci-fi adventure beyond the stars', 'Епічна науково-фантастична пригода за межами зірок',
- 'SCIENCE_FICTION', 'CHILD', 'ENGLISH', '2004-05-15', 280, 18.99, 10),
-('Dancing with Shadows', 'Танець із тінями', 'Olivia Smith', 'Олівія Сміт',
- 'A thrilling tale of danger and intrigue', 'Захоплива історія небезпеки та інтриг',
- 'THRILLER', 'ADULT', 'ENGLISH', '2015-05-15', 380, 26.50, 10),
-('Voices in the Wind', 'Голоси у вітрі', 'William Turner', 'Вільям Тернер',
- 'A compelling journey through time', 'Захоплива подорож крізь час',
- 'HISTORICAL_FICTION', 'ADULT', 'ENGLISH', '2017-05-15', 500, 32.00, 10),
-('Serenade of Souls', 'Серенада душ', 'Isabella Reed', 'Ізабелла Рід',
- 'A magical fantasy filled with wonder', 'Магічне фентезі, сповнене див',
- 'FANTASY', 'TEEN', 'ENGLISH', '2013-05-15', 330, 15.99, 10),
-('Silent Whispers', 'Тихий шепіт', 'Benjamin Hall', 'Бенджамін Голл',
- 'A mystery that keeps you on the edge', 'Детектив, що тримає на межі напруги',
- 'MYSTERY', 'ADULT', 'ENGLISH', '2021-05-15', 420, 27.50, 10),
-('Whirlwind Romance', 'Вир кохання', 'Emma Turner', 'Емма Тернер',
- 'A romance that sweeps you off your feet', 'Роман, що зносить з ніг',
- 'ROMANCE', 'OTHER', 'ENGLISH', '2022-05-15', 360, 23.25, 10);
+    ('The Hidden Treasure', 'Прихований скарб',
+     'Emily White', 'Емілі Вайт',
+     'Adventure story', 'Пригодницька історія',
+     'Adventure', 'Пригоди',
+     'TEEN', 'ENGLISH', '2018-05-15', 320, 24.99, 10),
+
+    ('Echoes of Eternity', 'Відлуння вічності',
+     'Daniel Black', 'Деніел Блек',
+     'Fantasy story', 'Фентезі історія',
+     'Fantasy', 'Фентезі',
+     'ADULT', 'UKRAINIAN', '2011-01-15', 350, 16.50, 8),
+
+    ('Whispers in the Shadows', 'Шепіт у тінях',
+     'Sophia Green', 'Софія Ґрін',
+     'A gripping mystery that keeps you guessing',
+     'Захоплива детективна історія, що тримає в напрузі',
+     'Mystery', 'Детектив',
+     'ADULT', 'ENGLISH', '2018-08-11', 450, 29.95, 10),
+
+    ('The Starlight Sonata', 'Соната зоряного світла',
+     'Michael Rose', 'Майкл Роуз',
+     'A beautiful journey of love and passion',
+     'Прекрасна подорож кохання та пристрасті',
+     'Romance', 'Романтика',
+     'ADULT', 'ENGLISH', '2011-05-15', 320, 21.75, 10),
+
+    ('Beyond the Horizon', 'За обрієм',
+     'Alex Carter', 'Алекс Картер',
+     'An epic sci-fi adventure beyond the stars',
+     'Епічна науково-фантастична пригода за межами зірок',
+     'Science Fiction', 'Наукова фантастика',
+     'CHILD', 'ENGLISH', '2004-05-15', 280, 18.99, 10),
+
+    ('Dancing with Shadows', 'Танець із тінями',
+     'Olivia Smith', 'Олівія Сміт',
+     'A thrilling tale of danger and intrigue',
+     'Захоплива історія небезпеки та інтриг',
+     'Thriller', 'Трилер',
+     'ADULT', 'ENGLISH', '2015-05-15', 380, 26.50, 10),
+
+    ('Voices in the Wind', 'Голоси у вітрі',
+     'William Turner', 'Вільям Тернер',
+     'A compelling journey through time',
+     'Захоплива подорож крізь час',
+     'Historical Fiction', 'Історична проза',
+     'ADULT', 'ENGLISH', '2017-05-15', 500, 32.00, 10),
+
+    ('Serenade of Souls', 'Серенада душ',
+     'Isabella Reed', 'Ізабелла Рід',
+     'A magical fantasy filled with wonder',
+     'Магічне фентезі, сповнене див',
+     'Fantasy', 'Фентезі',
+     'TEEN', 'ENGLISH', '2013-05-15', 330, 15.99, 10),
+
+    ('Silent Whispers', 'Тихий шепіт',
+     'Benjamin Hall', 'Бенджамін Голл',
+     'A mystery that keeps you on the edge',
+     'Детектив, що тримає на межі напруги',
+     'Mystery', 'Детектив',
+     'ADULT', 'ENGLISH', '2021-05-15', 420, 27.50, 10),
+
+    ('Whirlwind Romance', 'Вир кохання',
+     'Emma Turner', 'Емма Тернер',
+     'A romance that sweeps you off your feet',
+     'Роман, що зносить з ніг',
+     'Romance', 'Романтика',
+     'OTHER', 'ENGLISH', '2022-05-15', 360, 23.25, 10);

@@ -1,0 +1,19 @@
+/* only recharge-specific */
+
+.recharge-card{
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.recharge-balance{
+    margin-bottom: 12px;
+}
+
+.recharge-form{
+    display: grid;
+    gap: 12px;
+}
+
+.recharge-actions{
+    justify-content: flex-start;
+}

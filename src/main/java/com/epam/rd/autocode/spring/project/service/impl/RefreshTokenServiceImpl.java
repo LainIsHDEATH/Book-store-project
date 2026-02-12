@@ -6,6 +6,7 @@ import com.epam.rd.autocode.spring.project.repo.RefreshTokenRepository;
 import com.epam.rd.autocode.spring.project.service.RefreshTokenService;
 
 import jakarta.transaction.Transactional;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Transactional
     public RefreshToken createRefreshToken(String email) {
         refreshTokenRepository.deleteByUserEmail(email);
+        refreshTokenRepository.flush();
 
         RefreshToken refreshToken = RefreshToken.builder()
                 .userEmail(email)
@@ -51,5 +53,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Transactional
     public void deleteByUserEmail(String email) {
         refreshTokenRepository.deleteByUserEmail(email);
+    }
+
+    @Transactional
+    public void deleteByToken(String token){
+        refreshTokenRepository.deleteRefreshTokenByToken(token);
     }
 }

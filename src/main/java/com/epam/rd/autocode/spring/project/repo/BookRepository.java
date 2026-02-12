@@ -41,4 +41,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     @Query("SELECT DISTINCT b.language FROM Book b")
     List<String> findAllLanguages();
+
+    @Query("select distinct b.genreEn from Book b")
+    List<String> findAllEnGenres();
 }

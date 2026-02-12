@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{employee.profile.title.page}">Employee profile</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+    <link rel="stylesheet" th:href="@{/css/book-list-form.css}">
+    <link rel="stylesheet" th:href="@{/css/profile.css}">
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: topbar}"></div>
+
+<div class="container">
+
+    <div class="page-head">
+        <h1 class="title" th:text="#{employee.profile.title.page}">Employee profile</h1>
+
+        <div class="actions">
+            <a class="btn btn-ghost" th:href="@{/employees/orders}" th:text="#{employee.profile.nav.orders}">Orders</a>
+            <a class="btn btn-ghost" th:href="@{/employees/books}" th:text="#{employee.profile.nav.books}">Books</a>
+            <a class="btn btn-ghost" th:href="@{/employees/clients}" th:text="#{employee.profile.nav.clients}">Clients</a>
+        </div>
+    </div>
+
+    <!-- saved -->
+    <div class="alert alert-ok" th:if="${param.success}" th:text="#{employee.profile.saved}">
+        Profile saved.
+    </div>
+
+    <!-- Profile card -->
+    <div class="card">
+        <div class="card-body">
+
+            <div class="muted" th:text="#{employee.profile.section.account}">Account</div>
+            <div style="height:10px;"></div>
+
+            <div class="row">
+                <div class="label" th:text="#{employee.profile.field.email}">Email</div>
+                <div class="value">
+                    <input class="input" th:value="${employee.email}" readonly/>
+                </div>
+            </div>
+
+            <hr class="sep"/>
+
+            <!-- IMPORTANT: bind to "form" -->
+            <form method="post" th:action="@{/employees/profile/save}" th:object="${form}">
+
+                <div class="row">
+                    <div class="label" th:text="#{employee.profile.field.name}">Name</div>
+                    <div class="value">
+                        <input class="input"
+                               th:field="*{name}"
+                               th:placeholder="#{employee.profile.placeholder.name}"/>
+                        <div class="err"
+                             th:if="${#fields.hasErrors('name')}"
+                             th:errors="*{name}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="label" th:text="#{employee.profile.field.phone}">Phone</div>
+                    <div class="value">
+                        <input class="input"
+                               th:field="*{phone}"
+                               th:placeholder="#{employee.profile.placeholder.phone}"/>
+                        <div class="err"
+                             th:if="${#fields.hasErrors('phone')}"
+                             th:errors="*{phone}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="label" th:text="#{employee.profile.field.birthDate}">Birth date</div>
+                    <div class="value">
+                        <input class="input" type="date" th:field="*{birthDate}"/>
+                        <div class="err"
+                             th:if="${#fields.hasErrors('birthDate')}"
+                             th:errors="*{birthDate}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn" type="submit" th:text="#{action.save}">Save</button>
+                    <a class="btn btn-ghost" th:href="@{/employees/profile}" th:text="#{action.reset}">Reset</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Danger zone -->
+    <div class="card danger">
+        <div class="card-body">
+
+            <div class="muted" th:text="#{employee.profile.section.danger}">Danger zone</div>
+            <div style="height:10px;"></div>
+
+            <div class="muted" th:text="#{employee.profile.danger.text}">
+                This permanently deletes your employee account.
+            </div>
+
+            <div style="height:12px;"></div>
+
+            <form method="post"
+                  th:action="@{/employees/profile/delete}"
+                  onsubmit="return confirm(this.getAttribute('data-confirm'));"
+                  th:attr="data-confirm=#{employee.profile.confirm.delete}">
+                <button class="btn btn-danger" type="submit" th:text="#{employee.profile.action.deleteAccount}">
+                    Delete account
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

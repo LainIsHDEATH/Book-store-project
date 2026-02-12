@@ -1,14 +1,11 @@
 package com.epam.rd.autocode.spring.project.model;
 
 import com.epam.rd.autocode.spring.project.model.enums.OrderStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +13,9 @@ import java.util.List;
 @Table(name = "orders")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Order {
 
     @Id
@@ -31,7 +31,7 @@ public class Order {
     private Employee employee;
 
     @Column(name = "order_date", nullable = false)
-    private LocalDateTime orderDate;
+    private Instant orderDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -42,4 +42,13 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BookItem> items = new ArrayList<>();
+
+    public void incrementPrice(BigDecimal amount) {
+        this.price = this.price.add(amount);
+    }
+
+    public void decrementPrice(BigDecimal amount) {
+        this.price = this.price.subtract(amount);
+    }
+
 }

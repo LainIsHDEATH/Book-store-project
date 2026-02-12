@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Blocked</title>
+    <link rel="stylesheet" th:href="@{/css/book-list-form.css}">
+    <style>
+        .error-wrap { max-width: 760px; margin: 0 auto; padding: 24px; }
+        .error-code { font-size: 52px; font-weight: 900; letter-spacing: -0.04em; margin: 0; }
+        .error-title { font-size: 20px; font-weight: 800; margin: 8px 0 6px; }
+        .error-text { margin: 0; }
+        .error-actions { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+    </style>
+</head>
+<body>
+<div th:insert="~{fragments/navbar :: topbar}"></div>
+
+<div class="container">
+    <div class="card error-wrap">
+        <div class="card-body">
+            <p class="error-code">BLOCKED</p>
+            <div class="error-title">Account blocked</div>
+            <p class="muted error-text">
+                Your account is blocked. Contact support or an employee to unblock it.
+            </p>
+
+            <div class="error-actions">
+                <a class="btn" th:href="@{/}" >Home</a>
+                <a class="btn" th:href="@{/auth/login}">Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
