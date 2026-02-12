@@ -48,6 +48,12 @@
     </form>
 
     <div class="muted" style="margin-top:12px;text-align:center;">
+        <a class="link" th:href="@{/auth/password/forgot}" th:text="#{page.login.forgotPassword}">
+            Forgot password?
+        </a>
+
+        <br/>
+
         <a class="link" th:href="@{/auth/register}" th:text="#{page.login.noAccount.register}">
             Have no account? Register
         </a>

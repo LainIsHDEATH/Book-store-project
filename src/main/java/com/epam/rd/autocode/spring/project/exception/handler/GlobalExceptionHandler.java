@@ -23,7 +23,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({AlreadyExistException.class, UserAlreadyExistsException.class})
     public String conflict(RuntimeException ex, HttpServletRequest req, HttpServletResponse resp) {
-        // для POST лучше редирект назад с errorKey
         if (isPost(req)) return redirectBack(req, "/?errorKey=error.conflict", "errorKey", "error.conflict");
         resp.setStatus(409);
         req.setAttribute("errorKey", "error.conflict");
@@ -33,7 +32,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({InvalidBalanceException.class, BalanceRechargeException.class})
     public String badBusiness(RuntimeException ex, HttpServletRequest req) {
-        // бизнес-ошибки для UI почти всегда показывают на странице, куда пользователь пришёл
         return redirectBack(req, "/?errorKey=error.badRequest", "errorKey", "error.badRequest");
     }
 

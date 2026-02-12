@@ -42,13 +42,9 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private final SecureRandom secureRandom = new SecureRandom();
     private final Duration ttl = Duration.ofMinutes(15);
 
-    /**
-     * Всегда ведём себя одинаково, чтобы не палить существование email.
-     */
     @Override
     @Transactional
     public void requestReset(String email) {
-        // чистка мусора
         tokenRepo.deleteByExpiryDateBefore(Instant.now());
 
         var user = findUserByEmail(email);
@@ -59,7 +55,6 @@ public class PasswordResetServiceImpl implements PasswordResetService {
             return;
         }
 
-        // один активный токен на email
         tokenRepo.deleteByUserEmail(email);
 
         PasswordResetToken t = new PasswordResetToken();
@@ -148,14 +143,14 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         var clientOpt = clientRepository.findByEmail(email);
         if (clientOpt.isPresent()) {
             var c = clientOpt.get();
-            boolean blocked = Boolean.TRUE.equals(c.getIsBlocked()); // или c.isBlocked()
+            boolean blocked = Boolean.TRUE.equals(c.getIsBlocked());
             return new FoundUser(email, UserType.CLIENT, blocked);
         }
 
         var empOpt = employeeRepository.findByEmail(email);
         if (empOpt.isPresent()) {
             var e = empOpt.get();
-            boolean blocked = Boolean.TRUE.equals(e.getIsBlocked()); // если есть
+            boolean blocked = Boolean.TRUE.equals(e.getIsBlocked());
             return new FoundUser(email, UserType.EMPLOYEE, blocked);
         }
 

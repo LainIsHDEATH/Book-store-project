@@ -40,8 +40,6 @@ public class EmployeeController {
     private final ClientService clientService;
     private final EmployeeService employeeService;
     private final RefreshTokenService refreshTokenService;
-//    private final LoginAttemptService loginAttemptService;
-//    private final PasswordResetService passwordResetService;
 
     @GetMapping("/books")
     public String listBooks(Model model) {

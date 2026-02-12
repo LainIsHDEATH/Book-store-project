@@ -37,7 +37,6 @@ public class ClientController {
 
     private final ClientService clientService;
     private final RefreshTokenService refreshTokenService;
-//    private final PasswordResetService passwordResetService;
 
     @GetMapping("/profile")
     public String showProfile(Authentication auth, Model model) {
